@@ -1,4 +1,4 @@
-* Análisis descriptivo de los hogares ENAHO*
+* Análisis descriptivo laborales ENAHO*
 *
 *-----------------------------------------------------------------------
 *Base ENAHO 2023 – Módulo 5: Empleo e ingreso* ----------------------------------------------------------------------*
@@ -134,3 +134,4 @@ histogram r6 if ocu_2==1 & r6<=15600, normal
 * Comparación del ingreso por área y dominio
 graph box r6 if ocu_2==1 & r6<=15600, over(r8r)
 graph box r6 if ocu_2==1 & r6<=15600, over(g_dominio)
+
