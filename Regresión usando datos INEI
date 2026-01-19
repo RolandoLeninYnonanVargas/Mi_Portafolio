@@ -1,0 +1,40 @@
+#IMPORTACIÓN DE DATOS, LIMPIEZA Y FORMATO LONG
+from google.colab import files
+archivo = files.upload()
+import pandas as pd
+datos = pd.read_excel("cd4_51.xlsx", header=3)
+datos = datos.drop(list(range(0, 3)))
+datos = datos.reset_index(drop=True)
+datos = datos.drop(list(range(26, 30)))
+datos = pd.melt(datos, id_vars=["Departamento"], var_name = "año", value_name = "nbi")
+#datos.head()
+datos #no olvidar que los comandos de visualización sin print, prevalece solo el ultimo.
+datos.to_excel('nbi.xlsx', index=False)
+files.download('nbi.xlsx')
+
+#LO MISMO PERO A UNA SEGUNDA VARIABLE
+#ahora vamos a importar la variable matriculados y trabajar.
+archivo2 = files.upload()
+datos2 = pd.read_excel("cd1_81.xlsx", header=3)
+datos2 = datos2.drop(list(range(0, 3)))
+datos2 = datos2.reset_index(drop=True)
+datos2 = datos2.drop(list(range(26, 30)))
+datos2 = pd.melt(datos2, id_vars=["Departamento"], var_name = "año", value_name = "matriculados")
+datos2.to_excel('matriculados.xlsx', index=False)
+files.download('matriculados.xlsx')
+datos2.head()
+datos2
+
+#FUSIÓN DE BASES DE DATOS PARA PONER CREAR EL PROGRAMA
+datos_modelo = pd.merge(datos, datos2, on=["Departamento", "año"])
+#datos_modelo = pd.merge(datos, datos2, on=["Departamento", "año"], how="outer")
+datos_modelo.to_excel('datos_modelo.xlsx', index=False)
+files.download('datos_modelo.xlsx')
+datos_modelo.head()
+datos_modelo
+
+
+#MODELO POOL (REGRESIÓN BÁSICA COMO SI FUERA CORTE TRANSVERSAL)
+import statsmodels.api as sm
+modelo = sm.OLS(datos_modelo["matriculados"], sm.add_constant(datos_modelo["nbi"])).fit() #POOL
+print(modelo.summary())
